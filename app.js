@@ -9,7 +9,7 @@
   // ========== CONFIGURATION ==========
   const CONFIG = Object.freeze({
     // Replace with your published Google Sheet CSV URL
-    sheetUrl: 'https://docs.google.com/spreadsheets/d/1xHToJRMfDRV66SmOr_gXmPZCK9FM_-S-ZAbZrguP1b8/edit?usp=sharing',
+    sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRN5G-aBP45cQyt3m2Ojt5YDi7FdG56-vkmsftv5AnA4KoF17LzD9g1VtTKZOJRGX-HoukZCLxpkP4F/pub?output=csv',
     storageKey: 'sighborg_seen',
     cacheKey: 'sighborg_jokes',
     cacheTTL: 3600000, // 1 hour cache
