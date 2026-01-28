@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sigh-borg: Your daily dose of puns, dad jokes, and mom jokes that'll make you groan.">
+  <meta name="theme-color" content="#F57C20">
+  <title>Sigh-borg | Puns & Dad Jokes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img 
+      src="images/logo.png" 
+      alt="Sigh-borg - A weary robot with steam coming from its head" 
+      class="logo"
+      width="160"
+      height="160"
+    >
+    <h1>SIGH-BORG</h1>
+    <p class="tagline">Groan-inducing puns served fresh daily 🤖</p>
+  </header>
+
+  <main>
+    <!-- Top Ad Slot -->
+    <div class="ad-slot" aria-label="Advertisement">
+      <!-- Google AdSense Code Here -->
+      <span>Ad Space</span>
+    </div>
+
+    <article class="joke-card">
+      <div class="joke-content" id="jokeContent" aria-live="polite">
+        <p class="loading">Warming up the groan machine...</p>
+      </div>
+      <button class="groan-btn" id="nextBtn" type="button" disabled>
+        Make Me Groan Again
+      </button>
+    </article>
+
+    <p class="progress" id="progress" aria-live="polite"></p>
+
+    <!-- Bottom Ad Slot -->
+    <div class="ad-slot ad-slot-bottom" aria-label="Advertisement">
+      <!-- Google AdSense Code Here -->
+      <span>Ad Space</span>
+    </div>
+  </main>
+
+  <footer>
+    <nav class="footer-links" aria-label="Legal">
+      <a href="#privacy" id="privacyLink">Privacy Policy</a>
+      <a href="#terms" id="termsLink">Terms of Use</a>
+    </nav>
+    <p class="copyright">© <span id="year"></span> Sigh-borg. All groans reserved.</p>
+  </footer>
+
+  <!-- Privacy Policy Modal -->
+  <div class="modal-overlay" id="privacyModal" role="dialog" aria-labelledby="privacyTitle" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <span id="privacyTitle">Privacy Policy</span>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Last updated:</strong> January 2025</p>
+        
+        <h3>Information We Collect</h3>
+        <p>Sigh-borg collects minimal data to provide you with the best groan-worthy experience:</p>
+        <ul>
+          <li><strong>Local Storage:</strong> We store a record of jokes you've seen in your browser's local storage. This data never leaves your device and is used solely to ensure you see all our jokes before repeating.</li>
+          <li><strong>Analytics:</strong> We may use third-party analytics services to understand how visitors use our site. This data is anonymized and aggregated.</li>
+          <li><strong>Advertising:</strong> We use Google AdSense which may use cookies to serve personalized ads based on your browsing history.</li>
+        </ul>
+        
+        <h3>Cookies</h3>
+        <p>Our advertising partners may use cookies. You can manage cookie preferences through your browser settings.</p>
+        
+        <h3>Third-Party Services</h3>
+        <p>We use Google Sheets to store our jokes and Google AdSense for advertising. These services have their own privacy policies.</p>
+        
+        <h3>Data Retention</h3>
+        <p>Local storage data persists until you clear your browser data. We do not store any personal information on our servers.</p>
+        
+        <h3>Your Rights</h3>
+        <p>You can clear your local storage at any time through your browser settings to reset your joke history.</p>
+        
+        <h3>Contact</h3>
+        <p>Questions? Email us at <a href="mailto:connect@sigh-borg.com">connect@sigh-borg.com</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms of Use Modal -->
+  <div class="modal-overlay" id="termsModal" role="dialog" aria-labelledby="termsTitle" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <span id="termsTitle">Terms of Use</span>
+        <button class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Last updated:</strong> January 2025</p>
+        
+        <h3>Acceptance of Terms</h3>
+        <p>By accessing Sigh-borg, you agree to these terms. If you disagree, please navigate away (but you'll miss some great puns).</p>
+        
+        <h3>Use of Service</h3>
+        <p>Sigh-borg is provided for entertainment purposes. You may:</p>
+        <ul>
+          <li>View and enjoy our puns and jokes</li>
+          <li>Share jokes with friends (we encourage spreading the groans)</li>
+          <li>Use the site for personal, non-commercial purposes</li>
+        </ul>
+        
+        <h3>Content</h3>
+        <p>All jokes and content on Sigh-borg are provided "as is" for entertainment. We make no warranties about the quality of the groans induced.</p>
+        
+        <h3>Intellectual Property</h3>
+        <p>The Sigh-borg name, logo, and original content are our property. Many jokes are in the public domain or are traditional. If you believe we've used your original content without permission, please contact us.</p>
+        
+        <h3>Disclaimer</h3>
+        <p>We are not responsible for:</p>
+        <ul>
+          <li>Eye-rolling injuries</li>
+          <li>Uncontrollable sighing</li>
+          <li>Loss of friends due to excessive pun-sharing</li>
+          <li>Any actual damages (we're just here for laughs)</li>
+        </ul>
+        
+        <h3>Modifications</h3>
+        <p>We may update these terms occasionally. Continued use constitutes acceptance of changes.</p>
+        
+        <h3>Contact</h3>
+        <p>Questions or concerns? Reach us at <a href="mailto:connect@sigh-borg.com">connect@sigh-borg.com</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
