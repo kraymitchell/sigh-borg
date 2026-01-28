@@ -1,0 +1,361 @@
+/* ============================================================================
+   SIGH-BORG STYLES
+   Mobile-first responsive design
+   ============================================================================ */
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --orange: #F57C20;
+  --orange-dark: #D96A15;
+  --cream: #E8DCC8;
+  --metal: #8B8B7A;
+  --metal-dark: #6B6B5A;
+  --rust: #B87333;
+  --charcoal: #2D2D2D;
+  --white: #FAFAF8;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--orange);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--charcoal);
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+header {
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.logo {
+  width: clamp(100px, 25vw, 160px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+h1 {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  color: var(--white);
+  text-shadow: 3px 3px 0 var(--charcoal), -1px -1px 0 var(--charcoal);
+  letter-spacing: 0.05em;
+  margin-top: 0.5rem;
+}
+
+.tagline {
+  color: var(--cream);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+/* ============================================================================
+   MAIN CONTENT
+   ============================================================================ */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================================================================
+   AD SLOTS
+   ============================================================================ */
+.ad-slot {
+  width: 100%;
+  max-width: 320px;
+  min-height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.ad-slot-bottom {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================================
+   JOKE CARD
+   ============================================================================ */
+.joke-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  width: 100%;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 4px var(--rust),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.joke-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--metal), var(--rust), var(--metal));
+}
+
+.joke-content {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.joke-setup {
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
+  color: var(--charcoal);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.joke-punchline {
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
+  color: var(--orange-dark);
+  font-weight: 600;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.joke-single {
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
+  color: var(--charcoal);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   STATES
+   ============================================================================ */
+.loading {
+  color: var(--metal);
+  font-style: italic;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 0.95rem;
+}
+
+/* ============================================================================
+   BUTTON
+   ============================================================================ */
+.groan-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  font-family: 'Bangers', cursive;
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  letter-spacing: 0.03em;
+  color: var(--white);
+  background: linear-gradient(180deg, var(--orange) 0%, var(--orange-dark) 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 0 var(--rust),
+    0 6px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.groan-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 0 var(--rust),
+    0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.groan-btn:active {
+  transform: translateY(2px);
+  box-shadow: 
+    0 2px 0 var(--rust),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.groan-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================================================
+   PROGRESS
+   ============================================================================ */
+.progress {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--cream);
+  text-align: center;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+footer {
+  background: var(--charcoal);
+  color: var(--cream);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+footer a {
+  color: var(--orange);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+footer a:hover {
+  color: var(--white);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.copyright {
+  opacity: 0.7;
+  margin-top: 0.5rem;
+}
+
+/* ============================================================================
+   MODALS
+   ============================================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  background: var(--orange);
+  color: var(--white);
+  padding: 1.25rem 1.5rem;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.75rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.modal-body h3 {
+  color: var(--orange-dark);
+  margin: 1.5rem 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.modal-body h3:first-child {
+  margin-top: 0;
+}
+
+.modal-body p {
+  margin-bottom: 0.75rem;
+}
+
+.modal-body ul {
+  margin: 0.5rem 0 0.75rem 1.5rem;
+}
+
+.modal-body a {
+  color: var(--orange-dark);
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--rust);
+  outline-offset: 2px;
+}
