@@ -21,15 +21,26 @@
   const $ = id => document.getElementById(id);
   const jokeContent = $('jokeContent');
   const nextBtn = $('nextBtn');
-  const progress = $('progress');
+
+  // ========== DEBUG CONSOLE ==========
+  const DEBUG = {
+    log(message, data) {
+      console.log(`[SIGHBORG] ${message}`, data || '');
+    },
+    error(message, error) {
+      console.error(`[SIGHBORG ERROR] ${message}`, error || '');
+    }
+  };
 
   // ========== STORAGE UTILITIES ==========
   const Storage = {
     get(key) {
       try {
         const item = localStorage.getItem(key);
+        DEBUG.log(`Storage GET ${key}:`, item ? 'found' : 'not found');
         return item ? JSON.parse(item) : null;
-      } catch {
+      } catch (e) {
+        DEBUG.error(`Storage GET failed for ${key}:`, e);
         return null;
       }
     },
@@ -37,8 +48,10 @@
     set(key, value) {
       try {
         localStorage.setItem(key, JSON.stringify(value));
+        DEBUG.log(`Storage SET ${key}:`, 'success');
         return true;
-      } catch {
+      } catch (e) {
+        DEBUG.error(`Storage SET failed for ${key}:`, e);
         return false;
       }
     },
@@ -46,8 +59,9 @@
     remove(key) {
       try {
         localStorage.removeItem(key);
-      } catch {
-        // Silent fail
+        DEBUG.log(`Storage REMOVE ${key}:`, 'success');
+      } catch (e) {
+        DEBUG.error(`Storage REMOVE failed for ${key}:`, e);
       }
     }
   };
@@ -91,14 +105,17 @@
     seenIds: new Set(),
 
     async init() {
+      DEBUG.log('JokeManager initializing...');
       this.loadSeen();
       await this.loadJokes();
+      DEBUG.log('JokeManager initialized. Total jokes:', this.jokes.length);
     },
 
     loadSeen() {
       const data = Storage.get(CONFIG.storageKey);
       if (Array.isArray(data)) {
         this.seenIds = new Set(data);
+        DEBUG.log('Loaded seen jokes:', this.seenIds.size);
       }
     },
 
@@ -112,27 +129,45 @@
       if (cached?.timestamp && Date.now() - cached.timestamp < CONFIG.cacheTTL) {
         this.jokes = cached.jokes || [];
         if (this.jokes.length > 0) {
+          DEBUG.log('Using cached jokes:', this.jokes.length);
           this.pruneSeenIds();
           return;
         }
       }
 
+      DEBUG.log('Cache miss or expired, fetching from sheet...');
       await this.fetchJokes();
     },
 
     async fetchJokes(retries = CONFIG.maxRetries) {
+      DEBUG.log(`Fetching jokes (${CONFIG.maxRetries - retries + 1}/${CONFIG.maxRetries})...`);
+      
       try {
+        DEBUG.log('Fetch URL:', CONFIG.sheetUrl);
+        
         const response = await fetch(CONFIG.sheetUrl, {
           cache: 'no-store',
           headers: { 'Accept': 'text/csv' }
         });
 
+        DEBUG.log('Response status:', response.status);
+        DEBUG.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const csv = await response.text();
+        DEBUG.log('CSV length:', csv.length);
+        DEBUG.log('CSV preview:', csv.substring(0, 200));
+        
         this.parseCSV(csv);
+
+        DEBUG.log('Parsed jokes:', this.jokes.length);
+
+        if (this.jokes.length === 0) {
+          throw new Error('No jokes found in CSV');
+        }
 
         // Cache results
         Storage.set(CONFIG.cacheKey, {
@@ -144,17 +179,22 @@
         this.pruneSeenIds();
 
       } catch (err) {
+        DEBUG.error('Fetch error:', err);
+        
         if (retries > 0) {
+          DEBUG.log(`Retrying in ${CONFIG.retryDelay}ms...`);
           await new Promise(r => setTimeout(r, CONFIG.retryDelay));
           return this.fetchJokes(retries - 1);
         }
-        throw new Error('Failed to load jokes. Please refresh the page.');
+        throw new Error('Failed to load jokes. Please refresh the page. Error: ' + err.message);
       }
     },
 
     parseCSV(csv) {
       const lines = csv.split('\n');
       this.jokes = [];
+
+      DEBUG.log('Parsing CSV lines:', lines.length);
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
@@ -173,6 +213,8 @@
           });
         }
       }
+
+      DEBUG.log('Parsed jokes array:', this.jokes.slice(0, 3));
     },
 
     hashString(str) {
@@ -189,19 +231,26 @@
       const prunedIds = [...this.seenIds].filter(id => validIds.has(id));
       
       if (prunedIds.length !== this.seenIds.size) {
+        DEBUG.log('Pruned seen IDs:', this.seenIds.size - prunedIds.length);
         this.seenIds = new Set(prunedIds);
         this.saveSeen();
       }
     },
 
     getNext() {
-      if (this.jokes.length === 0) return null;
+      if (this.jokes.length === 0) {
+        DEBUG.error('No jokes available');
+        return null;
+      }
 
       // Filter unseen jokes
       let unseen = this.jokes.filter(j => !this.seenIds.has(j.id));
 
+      DEBUG.log('Unseen jokes:', unseen.length);
+
       // Reset if all seen
       if (unseen.length === 0) {
+        DEBUG.log('All jokes seen, resetting...');
         this.seenIds.clear();
         this.saveSeen();
         unseen = this.jokes;
@@ -214,6 +263,8 @@
       // Mark as seen
       this.seenIds.add(joke.id);
       this.saveSeen();
+
+      DEBUG.log('Selected joke ID:', joke.id);
 
       return {
         ...JokeParser.format(joke.text),
@@ -245,9 +296,10 @@
 
       jokeContent.innerHTML = html;
 
-      if (joke.progress) {
-        progress.textContent = `${joke.progress.seen} of ${joke.progress.total} jokes seen`;
-      }
+      // Progress tracking removed - can be added to HTML if needed
+      // if (joke.progress) {
+      //   progress.textContent = `${joke.progress.seen} of ${joke.progress.total} jokes seen`;
+      // }
 
       nextBtn.disabled = false;
     },
@@ -255,7 +307,6 @@
     showLoading() {
       jokeContent.innerHTML = '<p class="loading">Warming up the groan machine...</p>';
       nextBtn.disabled = true;
-      progress.textContent = '';
     },
 
     showError(message) {
@@ -316,8 +367,13 @@
 
   // ========== INITIALIZATION ==========
   async function init() {
+    DEBUG.log('=== SIGHBORG INITIALIZING ===');
+    
     // Set copyright year
-    $('year').textContent = new Date().getFullYear();
+    const yearElement = $('year');
+    if (yearElement) {
+      yearElement.textContent = new Date().getFullYear();
+    }
 
     // Initialize modals
     Modal.init();
@@ -329,12 +385,15 @@
       await JokeManager.init();
       const joke = JokeManager.getNext();
       UI.showJoke(joke);
+      DEBUG.log('=== SIGHBORG READY ===');
     } catch (err) {
+      DEBUG.error('Initialization failed:', err);
       UI.showError(err.message);
     }
 
     // Button handler
     nextBtn.addEventListener('click', () => {
+      DEBUG.log('Next button clicked');
       const joke = JokeManager.getNext();
       UI.showJoke(joke);
     });
