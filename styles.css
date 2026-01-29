@@ -47,7 +47,6 @@ header {
 .logo {
   width: clamp(100px, 25vw, 160px);
   height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
   transition: transform 0.3s ease;
 }
 
