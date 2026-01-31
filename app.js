@@ -8,7 +8,6 @@
 
   // ========== CONFIGURATION ==========
   const CONFIG = Object.freeze({
-    // Replace with your published Google Sheet CSV URL
     sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRN5G-aBP45cQyt3m2Ojt5YDi7FdG56-vkmsftv5AnA4KoF17LzD9g1VtTKZOJRGX-HoukZCLxpkP4F/pub?output=csv',
     storageKey: 'sighborg_seen',
     cacheKey: 'sighborg_jokes',
@@ -16,6 +15,86 @@
     maxRetries: 3,
     retryDelay: 1000
   });
+
+  // ========== GA4 TRACKING ==========
+  const Analytics = {
+    clickStorageKey: 'sb_joke_clicks',
+    milestoneStorageKey: 'sb_joke_milestone_max',
+
+    safeInt(v) {
+      const n = parseInt(v, 10);
+      return Number.isFinite(n) ? n : 0;
+    },
+
+    isGtagReady() {
+      return typeof window.gtag === 'function';
+    },
+
+    getNextClickCount() {
+      const prev = this.safeInt(localStorage.getItem(this.clickStorageKey));
+      const next = prev + 1;
+      localStorage.setItem(this.clickStorageKey, String(next));
+      return next;
+    },
+
+    getLastMilestoneFired() {
+      return this.safeInt(localStorage.getItem(this.milestoneStorageKey));
+    },
+
+    setLastMilestoneFired(milestone) {
+      localStorage.setItem(this.milestoneStorageKey, String(milestone));
+    },
+
+    getMilestoneForClickCount(n) {
+      // 1–50: every 5 (5,10,15,...,50)
+      if (n >= 5 && n <= 50 && n % 5 === 0) return n;
+
+      // 50–100: every 10 (60,70,80,90,100)
+      if (n > 50 && n <= 100 && n % 10 === 0) return n;
+
+      // 100+: every 100 starting at 200 (200,300,400,...)
+      if (n >= 200 && n % 100 === 0) return n;
+
+      return null;
+    },
+
+    trackGenerateJokeClick() {
+      const clickCount = this.getNextClickCount();
+
+      if (!this.isGtagReady()) return;
+
+      // Every click
+      window.gtag('event', 'generate_joke', {
+        event_category: 'engagement',
+        event_label: 'next_joke_button',
+        joke_number: clickCount
+      });
+
+      // Optional: clean "2+ clicks" event, still useful for quick reporting
+      if (clickCount === 2) {
+        window.gtag('event', 'generate_joke_2plus', {
+          event_category: 'engagement',
+          event_label: 'second_joke_generated'
+        });
+      }
+
+      // Milestones
+      const milestone = this.getMilestoneForClickCount(clickCount);
+      if (!milestone) return;
+
+      const lastMilestone = this.getLastMilestoneFired();
+      if (milestone <= lastMilestone) return;
+
+      this.setLastMilestoneFired(milestone);
+
+      window.gtag('event', 'generate_joke_milestone', {
+        event_category: 'engagement',
+        event_label: 'joke_click_milestone',
+        milestone: milestone,
+        joke_number: clickCount
+      });
+    }
+  };
 
   // ========== DOM ELEMENTS ==========
   const $ = id => document.getElementById(id);
@@ -141,10 +220,10 @@
 
     async fetchJokes(retries = CONFIG.maxRetries) {
       DEBUG.log(`Fetching jokes (${CONFIG.maxRetries - retries + 1}/${CONFIG.maxRetries})...`);
-      
+
       try {
         DEBUG.log('Fetch URL:', CONFIG.sheetUrl);
-        
+
         const response = await fetch(CONFIG.sheetUrl, {
           cache: 'no-store',
           headers: { 'Accept': 'text/csv' }
@@ -160,7 +239,7 @@
         const csv = await response.text();
         DEBUG.log('CSV length:', csv.length);
         DEBUG.log('CSV preview:', csv.substring(0, 200));
-        
+
         this.parseCSV(csv);
 
         DEBUG.log('Parsed jokes:', this.jokes.length);
@@ -180,7 +259,7 @@
 
       } catch (err) {
         DEBUG.error('Fetch error:', err);
-        
+
         if (retries > 0) {
           DEBUG.log(`Retrying in ${CONFIG.retryDelay}ms...`);
           await new Promise(r => setTimeout(r, CONFIG.retryDelay));
@@ -226,10 +305,9 @@
     },
 
     pruneSeenIds() {
-      // Remove seen IDs for jokes that no longer exist (handles deleted jokes)
       const validIds = new Set(this.jokes.map(j => j.id));
       const prunedIds = [...this.seenIds].filter(id => validIds.has(id));
-      
+
       if (prunedIds.length !== this.seenIds.size) {
         DEBUG.log('Pruned seen IDs:', this.seenIds.size - prunedIds.length);
         this.seenIds = new Set(prunedIds);
@@ -243,12 +321,9 @@
         return null;
       }
 
-      // Filter unseen jokes
       let unseen = this.jokes.filter(j => !this.seenIds.has(j.id));
-
       DEBUG.log('Unseen jokes:', unseen.length);
 
-      // Reset if all seen
       if (unseen.length === 0) {
         DEBUG.log('All jokes seen, resetting...');
         this.seenIds.clear();
@@ -256,11 +331,9 @@
         unseen = this.jokes;
       }
 
-      // Random selection
       const idx = Math.floor(Math.random() * unseen.length);
       const joke = unseen[idx];
 
-      // Mark as seen
       this.seenIds.add(joke.id);
       this.saveSeen();
 
@@ -295,12 +368,6 @@
       }
 
       jokeContent.innerHTML = html;
-
-      // Progress tracking removed - can be added to HTML if needed
-      // if (joke.progress) {
-      //   progress.textContent = `${joke.progress.seen} of ${joke.progress.total} jokes seen`;
-      // }
-
       nextBtn.disabled = false;
     },
 
@@ -368,17 +435,14 @@
   // ========== INITIALIZATION ==========
   async function init() {
     DEBUG.log('=== SIGHBORG INITIALIZING ===');
-    
-    // Set copyright year
+
     const yearElement = $('year');
     if (yearElement) {
       yearElement.textContent = new Date().getFullYear();
     }
 
-    // Initialize modals
     Modal.init();
 
-    // Initialize jokes
     UI.showLoading();
 
     try {
@@ -391,15 +455,17 @@
       UI.showError(err.message);
     }
 
-    // Button handler
     nextBtn.addEventListener('click', () => {
       DEBUG.log('Next button clicked');
+
+      // GA4 tracking
+      Analytics.trackGenerateJokeClick();
+
       const joke = JokeManager.getNext();
       UI.showJoke(joke);
     });
   }
 
-  // Run when DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
