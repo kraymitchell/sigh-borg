@@ -270,7 +270,7 @@ main {
 
 .blurb p {
   margin: 0;
-  text-align: center;
+  text-align: left;
   color: var(--charcoal);
   font-size: 0.98rem;
   line-height: 1.7;
