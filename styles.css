@@ -115,7 +115,7 @@ main {
   border-radius: 16px;
   padding: 2rem 1.5rem;
   width: 100%;
-  box-shadow: 
+  box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.15),
     0 0 0 4px var(--rust),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -192,7 +192,7 @@ main {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 
+  box-shadow:
     0 4px 0 var(--rust),
     0 6px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.15s ease;
@@ -201,14 +201,14 @@ main {
 
 .groan-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 6px 0 var(--rust),
     0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
 .groan-btn:active {
   transform: translateY(2px);
-  box-shadow: 
+  box-shadow:
     0 2px 0 var(--rust),
     0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -217,6 +217,58 @@ main {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+/* ============================================================================
+   BINARY + SEO BLURB
+   (Binary line gets breathing room. SEO blurb matches joke-card styling.)
+   ============================================================================ */
+.binary-code {
+  width: 100%;
+  text-align: center;
+  margin: 28px 0 28px;
+  padding: 0 0.25rem;
+  letter-spacing: 1px;
+  color: var(--cream);
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.seo-blurb {
+  width: 100%;
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.25rem 1.25rem;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 4px var(--rust),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 1.25rem;
+}
+
+.seo-blurb::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--metal), var(--rust), var(--metal));
+}
+
+.seo-blurb p {
+  margin: 0;
+  text-align: center;
+  color: var(--charcoal);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.seo-blurb strong {
+  color: var(--orange-dark);
+  font-weight: 700;
 }
 
 /* ============================================================================
