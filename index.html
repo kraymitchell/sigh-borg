@@ -64,7 +64,7 @@
 
     <p class="binary-code">01010011 01101001 01100111 01101000</p>
 
-    <section class="blurb" aria-label="Get the Sigh-borg iOS widget">
+    <section class="blurb" id="widget-promo" aria-label="Get the Sigh-borg iOS widget">
       <p>
         <strong>Now on your home screen.</strong>
       </p>
@@ -190,7 +190,7 @@
       ‘use strict’;
 
       // The widget promo section is iOS-only — hide it on all other platforms.
-      var promoSection = document.querySelector(‘section[aria-label="Get the Sigh-borg iOS widget"]’);
+      var promoSection = document.getElementById(‘widget-promo’);
       if (promoSection && !/iPhone|iPad|iPod/.test(navigator.userAgent)) {
         promoSection.hidden = true;
       }
