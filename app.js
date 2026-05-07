@@ -315,6 +315,29 @@
       }
     },
 
+    getByIndex(index) {
+      if (this.jokes.length === 0) {
+        DEBUG.error('No jokes available');
+        return null;
+      }
+
+      const joke = this.jokes[index];
+      if (!joke) {
+        DEBUG.error('No joke at index:', index);
+        return null;
+      }
+
+      DEBUG.log('Selected joke by index:', index, 'ID:', joke.id);
+
+      return {
+        ...JokeParser.format(joke.text),
+        progress: {
+          seen: this.seenIds.size,
+          total: this.jokes.length
+        }
+      };
+    },
+
     getNext() {
       if (this.jokes.length === 0) {
         DEBUG.error('No jokes available');
@@ -447,7 +470,13 @@
 
     try {
       await JokeManager.init();
-      const joke = JokeManager.getNext();
+      const jokeParam = new URLSearchParams(window.location.search).get('joke');
+      const jokeIndex = parseInt(jokeParam, 10);
+      const useDeepLink = jokeParam !== null
+        && Number.isFinite(jokeIndex)
+        && jokeIndex >= 0
+        && jokeIndex < JokeManager.jokes.length;
+      const joke = useDeepLink ? JokeManager.getByIndex(jokeIndex) : JokeManager.getNext();
       UI.showJoke(joke);
       DEBUG.log('=== SIGHBORG READY ===');
     } catch (err) {
