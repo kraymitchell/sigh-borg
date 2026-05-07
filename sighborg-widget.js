@@ -7,7 +7,7 @@
 // Supported sizes: small · medium · large
 // Install: paste into Scriptable, add a widget, set script name.
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+// --- CONSTANTS ----------------------------------------------------------------
 
 const CSV_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRN5G-aBP45cQyt3m2Ojt5YDi7FdG56-vkmsftv5AnA4KoF17LzD9g1VtTKZOJRGX-HoukZCLxpkP4F/pub?output=csv";
 const LOGO_URL = "https://sigh-borg.com/images/logo-sigh-borg.jpg";
@@ -18,7 +18,7 @@ const LOGO_FILENAME  = "sighborg_logo.jpg";
 const CACHE_TTL_MS   = 60 * 60 * 1000; // 1 hour
 const MAX_JOKES      = 10000;           // memory safety cap
 
-// ─── COLORS ───────────────────────────────────────────────────────────────────
+// --- COLORS -------------------------------------------------------------------
 
 const COLOR_BG_TOP    = new Color("#e97e2c");
 const COLOR_BG_BOTTOM = new Color("#D96A15");
@@ -27,7 +27,7 @@ const COLOR_PUNCHLINE = new Color("#E8DCC8");
 const COLOR_MUTED     = new Color("#E8DCC8", 0.5);
 const COLOR_SEPARATOR = new Color("#FFFFFF", 0.2);
 
-// ─── FONT SIZES (pt) ─────────────────────────────────────────────────────────
+// --- FONT SIZES (pt) ---------------------------------------------------------
 
 const FONT_SMALL_JOKE  = 12;
 const FONT_MEDIUM_JOKE = 14;
@@ -36,14 +36,14 @@ const FONT_TITLE       = 17;
 const FONT_SUBTITLE    = 13;
 const FONT_FOOTER      = 10;
 
-// ─── LOGO DISPLAY SIZES (pt) ─────────────────────────────────────────────────
+// --- LOGO DISPLAY SIZES (pt) -------------------------------------------------
 
 const LOGO_SIZE_MEDIUM   = 32;
 const LOGO_SIZE_LARGE    = 36;
 const LOGO_RADIUS_MEDIUM = 6;
 const LOGO_RADIUS_LARGE  = 8;
 
-// ─── FILE MANAGER ─────────────────────────────────────────────────────────────
+// --- FILE MANAGER -------------------------------------------------------------
 
 // Always local — never iCloud — so caches survive without iCloud sign-in.
 const fm = FileManager.local();
@@ -52,7 +52,7 @@ function cachePath(filename) {
   return fm.joinPath(fm.cacheDirectory(), filename);
 }
 
-// ─── JOKES CACHE ──────────────────────────────────────────────────────────────
+// --- JOKES CACHE --------------------------------------------------------------
 
 /**
  * Reads the jokes cache from disk.
@@ -115,7 +115,7 @@ function writeJokesCache(jokes) {
   }
 }
 
-// ─── LOGO CACHE ───────────────────────────────────────────────────────────────
+// --- LOGO CACHE ---------------------------------------------------------------
 
 /**
  * Returns the logo Image object, reading from disk when already cached or
@@ -143,7 +143,7 @@ async function loadLogo() {
   }
 }
 
-// ─── CSV FETCH & VALIDATION ───────────────────────────────────────────────────
+// --- CSV FETCH & VALIDATION ---------------------------------------------------
 
 /**
  * Fetches the raw CSV string from the Google Sheets endpoint.
@@ -176,7 +176,7 @@ async function fetchCSV() {
   return body;
 }
 
-// ─── CSV PARSING ──────────────────────────────────────────────────────────────
+// --- CSV PARSING --------------------------------------------------------------
 
 /**
  * Strips HTML tags and non-printable control characters from a joke string.
@@ -217,7 +217,7 @@ function parseCSV(csv) {
   return jokes;
 }
 
-// ─── JOKE LOADING ─────────────────────────────────────────────────────────────
+// --- JOKE LOADING -------------------------------------------------------------
 
 /**
  * Returns the full jokes array using this priority:
@@ -251,7 +251,7 @@ async function loadJokes() {
   }
 }
 
-// ─── JOKE PARSING ─────────────────────────────────────────────────────────────
+// --- JOKE PARSING -------------------------------------------------------------
 
 /**
  * Splits a raw joke string into a structured object.
@@ -284,7 +284,7 @@ function parseJoke(raw) {
   return { hasBreak: false, text };
 }
 
-// ─── WIDGET HELPERS ───────────────────────────────────────────────────────────
+// --- WIDGET HELPERS -----------------------------------------------------------
 
 /** Applies the brand orange gradient (top → bottom) to the given widget. */
 function applyGradient(widget) {
@@ -305,7 +305,7 @@ function addSeparator(parent) {
   sep.addSpacer();
 }
 
-// ─── SMALL WIDGET (≈ 155 × 155 pt) ───────────────────────────────────────────
+// --- SMALL WIDGET (≈ 155 × 155 pt) -------------------------------------------
 
 /**
  * Both setup and punchline visible, 12pt, no logo.
@@ -343,7 +343,7 @@ function buildSmall(widget, joke) {
   footer.textColor = COLOR_MUTED;
 }
 
-// ─── MEDIUM WIDGET (≈ 329 × 155 pt) ──────────────────────────────────────────
+// --- MEDIUM WIDGET (≈ 329 × 155 pt) ------------------------------------------
 
 /**
  * Joke left-aligned at 14pt bold/regular; logo pinned top-right at 32×32pt;
@@ -394,7 +394,7 @@ function buildMedium(widget, joke, logo) {
   footer.textColor = COLOR_MUTED;
 }
 
-// ─── LARGE WIDGET (≈ 329 × 345 pt) ───────────────────────────────────────────
+// --- LARGE WIDGET (≈ 329 × 345 pt) -------------------------------------------
 
 /**
  * Header row (logo + title + subtitle), separator, centered joke at 16pt,
@@ -404,7 +404,7 @@ function buildLarge(widget, joke, logo) {
   applyGradient(widget);
   widget.setPadding(16, 16, 14, 16);
 
-  // ── Header ────────────────────────────────────────────────────────────────
+  // -- Header ----------------------------------------------------------------
   const header = widget.addStack();
   header.layoutHorizontally();
   header.centerAlignContent();
@@ -428,12 +428,12 @@ function buildLarge(widget, joke, logo) {
   subtitle.font      = Font.systemFont(FONT_SUBTITLE);
   subtitle.textColor = COLOR_MUTED;
 
-  // ── First separator ────────────────────────────────────────────────────────
+  // -- First separator --------------------------------------------------------
   widget.addSpacer(10);
   addSeparator(widget);
   widget.addSpacer(); // flexible — centres joke vertically in remaining space
 
-  // ── Joke content (centred) ─────────────────────────────────────────────────
+  // -- Joke content (centred) -------------------------------------------------
   if (joke.hasBreak) {
     const setup = widget.addText(joke.setup);
     setup.font      = Font.boldSystemFont(FONT_LARGE_JOKE);
@@ -456,19 +456,19 @@ function buildLarge(widget, joke, logo) {
     jokeText.lineLimit = 6;
   }
 
-  // ── Second separator ───────────────────────────────────────────────────────
+  // -- Second separator -------------------------------------------------------
   widget.addSpacer(); // flexible — pushes footer to bottom
   addSeparator(widget);
   widget.addSpacer(8);
 
-  // ── Footer ─────────────────────────────────────────────────────────────────
+  // -- Footer -----------------------------------------------------------------
   const footer = widget.addText("Tap for another groan · sigh-borg.com");
   footer.font      = Font.systemFont(FONT_FOOTER);
   footer.textColor = COLOR_MUTED;
   footer.centerAlignText();
 }
 
-// ─── ERROR WIDGET ─────────────────────────────────────────────────────────────
+// --- ERROR WIDGET -------------------------------------------------------------
 
 /** Graceful error state on the brand background. Cannot crash. */
 function buildError(widget) {
@@ -481,7 +481,7 @@ function buildError(widget) {
   msg.lineLimit = 4;
 }
 
-// ─── MAIN ─────────────────────────────────────────────────────────────────────
+// --- MAIN ---------------------------------------------------------------------
 
 async function run() {
   const widget = new ListWidget();
@@ -489,7 +489,7 @@ async function run() {
   // Default to medium when running inside the Scriptable app (not as a widget)
   const family = config.widgetFamily ?? "medium";
 
-  // ── Load jokes ────────────────────────────────────────────────────────────
+  // -- Load jokes ------------------------------------------------------------
   let jokes;
   try {
     jokes = await loadJokes();
@@ -500,20 +500,20 @@ async function run() {
     return;
   }
 
-  // ── Select a random joke and record its 0-based index for the deep-link ──
+  // -- Select a random joke and record its 0-based index for the deep-link --
   const jokeIndex = Math.floor(Math.random() * jokes.length);
   const joke      = parseJoke(jokes[jokeIndex]);
 
   // Tapping the widget opens the site with the same joke pre-loaded
   widget.url = `${SITE_URL}?joke=${jokeIndex}`;
 
-  // ── Logo is only needed for medium and large ───────────────────────────────
+  // -- Logo is only needed for medium and large -------------------------------
   let logo = null;
   if (family === "medium" || family === "large") {
     logo = await loadLogo();
   }
 
-  // ── Build the appropriate layout ──────────────────────────────────────────
+  // -- Build the appropriate layout ------------------------------------------
   if (family === "small") {
     buildSmall(widget, joke);
   } else if (family === "medium") {
