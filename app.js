@@ -471,7 +471,12 @@
     try {
       await JokeManager.init();
       const jokeParam = new URLSearchParams(window.location.search).get('joke');
-      const joke = jokeParam !== null ? JokeManager.getByIndex(parseInt(jokeParam, 10)) : JokeManager.getNext();
+      const jokeIndex = parseInt(jokeParam, 10);
+      const useDeepLink = jokeParam !== null
+        && Number.isFinite(jokeIndex)
+        && jokeIndex >= 0
+        && jokeIndex < JokeManager.jokes.length;
+      const joke = useDeepLink ? JokeManager.getByIndex(jokeIndex) : JokeManager.getNext();
       UI.showJoke(joke);
       DEBUG.log('=== SIGHBORG READY ===');
     } catch (err) {
