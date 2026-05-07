@@ -76,9 +76,8 @@
         <a href="https://apps.apple.com/app/scriptable/id1405459188" target="_blank" rel="noopener noreferrer">Download Scriptable (free)</a>
       </p>
       <p>
-        <strong>Step 2:</strong> Tap below to copy the widget code, then open Scriptable, tap <strong>+</strong> and paste.
+        <strong>Step 2:</strong> <a href="#" id="copy-widget-btn">Copy the widget code</a>, then open Scriptable, tap <strong>+</strong> and paste.
       </p>
-      <button type="button" id="copy-widget-btn" class="groan-btn">Copy Widget Code</button>
       <p><small>iOS only · Requires Scriptable · Free</small></p>
     </section>
 
@@ -195,21 +194,39 @@
         promoSection.style.display = ‘none’;
       }
 
-      // Copy widget source code to clipboard so the user can paste into Scriptable.
-      var copyBtn = document.getElementById(‘copy-widget-btn’);
-      if (copyBtn) {
-        copyBtn.addEventListener(‘click’, function () {
-          fetch(‘https://sigh-borg.com/sighborg-widget.js’)
-            .then(function (r) { return r.text(); })
-            .then(function (code) { return navigator.clipboard.writeText(code); })
-            .then(function () {
-              copyBtn.textContent = ‘Copied!’;
-              setTimeout(function () { copyBtn.textContent = ‘Copy Widget Code’; }, 3000);
-            })
-            .catch(function () {
-              copyBtn.textContent = ‘Could not copy — try again’;
-              setTimeout(function () { copyBtn.textContent = ‘Copy Widget Code’; }, 3000);
-            });
+      // Pre-fetch widget code in the background so it is ready to copy
+      // synchronously inside the click handler — required for iOS clipboard access.
+      var widgetCode = null;
+      fetch(‘https://sigh-borg.com/sighborg-widget.js’)
+        .then(function (r) { return r.text(); })
+        .then(function (code) { widgetCode = code; })
+        .catch(function () { /* non-fatal — handled at click time */ });
+
+      var copyLink = document.getElementById(‘copy-widget-btn’);
+      if (copyLink) {
+        copyLink.addEventListener(‘click’, function (e) {
+          e.preventDefault();
+
+          if (!widgetCode) {
+            copyLink.textContent = ‘Still loading — try again’;
+            setTimeout(function () { copyLink.textContent = ‘Copy the widget code’; }, 2500);
+            return;
+          }
+
+          // execCommand runs synchronously inside a user gesture, which is the
+          // only approach guaranteed to work across all iOS browsers.
+          var ta = document.createElement(‘textarea’);
+          ta.value = widgetCode;
+          ta.setAttribute(‘readonly’, ‘’);
+          ta.style.position = ‘absolute’;
+          ta.style.left = ‘-9999px’;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand(‘copy’);
+          document.body.removeChild(ta);
+
+          copyLink.textContent = ‘Copied!’;
+          setTimeout(function () { copyLink.textContent = ‘Copy the widget code’; }, 3000);
         });
       }
     }());
