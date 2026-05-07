@@ -69,8 +69,7 @@
         <strong>Now on your home screen.</strong>
       </p>
       <p>
-        Add the Sigh-borg widget and wake up to a fresh groan every morning. You'll need the free
-        Scriptable app first — then tap the button below to install the widget automatically.
+        Add the Sigh-borg widget and wake up to a fresh groan every morning. You'll need the free Scriptable app to run it.
       </p>
       <p>
         <strong>Step 1:</strong>
@@ -78,7 +77,7 @@
       </p>
       <p>
         <strong>Step 2:</strong>
-        <a href="scriptable:///import?url=https%3A%2F%2Fsigh-borg.com%2Fsighborg-widget.js" id="widget-install-btn">Install the Sigh-borg Widget</a>
+        <a href="https://sigh-borg.com/sighborg-widget.js" target="_blank" rel="noopener noreferrer">Open the widget script</a>, then tap <strong>Share</strong> and select <strong>Scriptable</strong>
       </p>
       <p><small>iOS only · Requires Scriptable · Free</small></p>
     </section>
@@ -188,31 +187,13 @@
 
   <script>
     (function () {
-      'use strict';
+      ‘use strict’;
 
-      var btn = document.getElementById('widget-install-btn');
-      if (!btn) return;
-
-      btn.addEventListener('click', function () {
-        // Do not call preventDefault() here — let the custom scheme attempt
-        // to hand off to Scriptable. We detect failure after the fact.
-        var clickedAt = Date.now(); // record tap time for elapsed-time reference
-
-        setTimeout(function () {
-          // If the document still has focus after 2 seconds, the OS did not
-          // switch to Scriptable, meaning it is likely not installed.
-          if (!document.hasFocus()) return;
-
-          // Guard against injecting the message more than once on repeated taps.
-          if (document.getElementById('widget-install-error')) return;
-
-          var msg = document.createElement('p');
-          msg.id        = 'widget-install-error';
-          msg.className = 'error';
-          msg.textContent = 'Scriptable doesn’t appear to be installed. Download it in Step 1 first.';
-          btn.insertAdjacentElement('afterend', msg);
-        }, 2000);
-      });
+      // The widget promo section is iOS-only — hide it on all other platforms.
+      var promoSection = document.querySelector(‘section[aria-label="Get the Sigh-borg iOS widget"]’);
+      if (promoSection && !/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        promoSection.hidden = true;
+      }
     }());
   </script>
   <script src="app.js"></script>
