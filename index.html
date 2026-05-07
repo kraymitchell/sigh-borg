@@ -63,7 +63,26 @@
     </article>
 
     <p class="binary-code">01010011 01101001 01100111 01101000</p>
-    
+
+    <section class="blurb" aria-label="Get the Sigh-borg iOS widget">
+      <p>
+        <strong>Now on your home screen.</strong>
+      </p>
+      <p>
+        Add the Sigh-borg widget and wake up to a fresh groan every morning. You'll need the free
+        Scriptable app first — then tap the button below to install the widget automatically.
+      </p>
+      <p>
+        <strong>Step 1:</strong>
+        <a href="https://apps.apple.com/app/scriptable/id1405459188" target="_blank" rel="noopener noreferrer">Download Scriptable (free)</a>
+      </p>
+      <p>
+        <strong>Step 2:</strong>
+        <a href="scriptable:///import?url=https://sigh-borg.com/sighborg-widget.js" id="widget-install-btn">Install the Sigh-borg Widget</a>
+      </p>
+      <p><small>iOS only · Requires Scriptable · Free</small></p>
+    </section>
+
     <section class="blurb" aria-label="About Sigh-borg">
       <p>
         <strong>Regurgitating humour like content since 2026.</strong>
@@ -167,6 +186,35 @@
     </div>
   </div>
 
+  <script>
+    (function () {
+      'use strict';
+
+      var btn = document.getElementById('widget-install-btn');
+      if (!btn) return;
+
+      btn.addEventListener('click', function () {
+        // Do not call preventDefault() here — let the custom scheme attempt
+        // to hand off to Scriptable. We detect failure after the fact.
+        var clickedAt = Date.now(); // record tap time for elapsed-time reference
+
+        setTimeout(function () {
+          // If the document still has focus after 2 seconds, the OS did not
+          // switch to Scriptable, meaning it is likely not installed.
+          if (!document.hasFocus()) return;
+
+          // Guard against injecting the message more than once on repeated taps.
+          if (document.getElementById('widget-install-error')) return;
+
+          var msg = document.createElement('p');
+          msg.id        = 'widget-install-error';
+          msg.className = 'error';
+          msg.textContent = 'Scriptable doesn’t appear to be installed. Download it in Step 1 first.';
+          btn.insertAdjacentElement('afterend', msg);
+        }, 2000);
+      });
+    }());
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
