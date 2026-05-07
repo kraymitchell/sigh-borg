@@ -76,9 +76,9 @@
         <a href="https://apps.apple.com/app/scriptable/id1405459188" target="_blank" rel="noopener noreferrer">Download Scriptable (free)</a>
       </p>
       <p>
-        <strong>Step 2:</strong>
-        <a href="https://sigh-borg.com/sighborg-widget.js" target="_blank" rel="noopener noreferrer">Open the widget script</a>, then tap <strong>Share</strong> and select <strong>Scriptable</strong>
+        <strong>Step 2:</strong> Tap below to copy the widget code, then open Scriptable, tap <strong>+</strong> and paste.
       </p>
+      <button type="button" id="copy-widget-btn" class="groan-btn">Copy Widget Code</button>
       <p><small>iOS only · Requires Scriptable · Free</small></p>
     </section>
 
@@ -189,10 +189,28 @@
     (function () {
       ‘use strict’;
 
-      // The widget promo section is iOS-only — hide it on all other platforms.
+      // Hide the widget promo section on all non-iOS platforms.
       var promoSection = document.getElementById(‘widget-promo’);
       if (promoSection && !/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-        promoSection.hidden = true;
+        promoSection.style.display = ‘none’;
+      }
+
+      // Copy widget source code to clipboard so the user can paste into Scriptable.
+      var copyBtn = document.getElementById(‘copy-widget-btn’);
+      if (copyBtn) {
+        copyBtn.addEventListener(‘click’, function () {
+          fetch(‘https://sigh-borg.com/sighborg-widget.js’)
+            .then(function (r) { return r.text(); })
+            .then(function (code) { return navigator.clipboard.writeText(code); })
+            .then(function () {
+              copyBtn.textContent = ‘Copied!’;
+              setTimeout(function () { copyBtn.textContent = ‘Copy Widget Code’; }, 3000);
+            })
+            .catch(function () {
+              copyBtn.textContent = ‘Could not copy — try again’;
+              setTimeout(function () { copyBtn.textContent = ‘Copy Widget Code’; }, 3000);
+            });
+        });
       }
     }());
   </script>
