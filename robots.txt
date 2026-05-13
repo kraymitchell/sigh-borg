@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /widget.html
+Disallow: /widget
+
+User-agent: *
+Allow: /
